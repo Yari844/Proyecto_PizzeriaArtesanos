@@ -3,12 +3,13 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\StoreProductoRequest;
+use App\Http\Requests\UpdateProductoRequest;
 use App\Http\Resources\ProductoCollection;
 use App\Http\Resources\ProductoResource;
 use App\Models\Producto;
 use Illuminate\Database\QueryException;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Request;
 
 class ProductoController extends Controller
 {
@@ -23,11 +24,9 @@ class ProductoController extends Controller
     /**
      * Crear un producto.
      */
-    public function store(Request $request): JsonResponse
+    public function store(StoreProductoRequest $request): JsonResponse
     {
-        $producto = Producto::create(
-            $request->only(['tipo', 'nombre', 'descripcion', 'presentacion', 'imagen', 'activo'])
-        );
+        $producto = Producto::create($request->validated());
 
         return response()->json([
             'mensaje' => 'Producto creado correctamente',
@@ -46,11 +45,9 @@ class ProductoController extends Controller
     /**
      * Actualizar un producto.
      */
-    public function update(Request $request, Producto $producto): JsonResponse
+    public function update(UpdateProductoRequest $request, Producto $producto): JsonResponse
     {
-        $producto->update(
-            $request->only(['tipo', 'nombre', 'descripcion', 'presentacion', 'imagen', 'activo'])
-        );
+        $producto->update($request->validated());
 
         return response()->json([
             'mensaje' => 'Producto actualizado correctamente',
