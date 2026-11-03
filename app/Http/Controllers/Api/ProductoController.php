@@ -3,6 +3,8 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Http\Resources\ProductoCollection;
+use App\Http\Resources\ProductoResource;
 use App\Models\Producto;
 use Illuminate\Database\QueryException;
 use Illuminate\Http\JsonResponse;
@@ -13,11 +15,9 @@ class ProductoController extends Controller
     /**
      * Listar todos los productos con sus precios.
      */
-    public function index(): JsonResponse
+    public function index(): ProductoCollection
     {
-        $productos = Producto::with('precios.tamano')->get();
-
-        return response()->json($productos);
+        return new ProductoCollection(Producto::with('precios.tamano')->get());
     }
 
     /**
@@ -31,16 +31,16 @@ class ProductoController extends Controller
 
         return response()->json([
             'mensaje' => 'Producto creado correctamente',
-            'data' => $producto,
+            'data' => new ProductoResource($producto),
         ], 201);
     }
 
     /**
      * Mostrar un producto.
      */
-    public function show(Producto $producto): JsonResponse
+    public function show(Producto $producto): ProductoResource
     {
-        return response()->json($producto->load('precios.tamano'));
+        return new ProductoResource($producto->load('precios.tamano'));
     }
 
     /**
@@ -54,7 +54,7 @@ class ProductoController extends Controller
 
         return response()->json([
             'mensaje' => 'Producto actualizado correctamente',
-            'data' => $producto,
+            'data' => new ProductoResource($producto),
         ]);
     }
 
