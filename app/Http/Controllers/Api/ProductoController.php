@@ -1,0 +1,78 @@
+<?php
+
+namespace App\Http\Controllers\Api;
+
+use App\Http\Controllers\Controller;
+use App\Models\Producto;
+use Illuminate\Database\QueryException;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
+
+class ProductoController extends Controller
+{
+    /**
+     * Listar todos los productos con sus precios.
+     */
+    public function index(): JsonResponse
+    {
+        $productos = Producto::with('precios.tamano')->get();
+
+        return response()->json($productos);
+    }
+
+    /**
+     * Crear un producto.
+     */
+    public function store(Request $request): JsonResponse
+    {
+        $producto = Producto::create(
+            $request->only(['tipo', 'nombre', 'descripcion', 'presentacion', 'imagen', 'activo'])
+        );
+
+        return response()->json([
+            'mensaje' => 'Producto creado correctamente',
+            'data' => $producto,
+        ], 201);
+    }
+
+    /**
+     * Mostrar un producto.
+     */
+    public function show(Producto $producto): JsonResponse
+    {
+        return response()->json($producto->load('precios.tamano'));
+    }
+
+    /**
+     * Actualizar un producto.
+     */
+    public function update(Request $request, Producto $producto): JsonResponse
+    {
+        $producto->update(
+            $request->only(['tipo', 'nombre', 'descripcion', 'presentacion', 'imagen', 'activo'])
+        );
+
+        return response()->json([
+            'mensaje' => 'Producto actualizado correctamente',
+            'data' => $producto,
+        ]);
+    }
+
+    /**
+     * Eliminar un producto.
+     */
+    public function destroy(Producto $producto): JsonResponse
+    {
+        try {
+            $producto->delete();
+        } catch (QueryException $e) {
+            return response()->json([
+                'mensaje' => 'No se puede eliminar el producto porque tiene ventas registradas. Desactívalo en su lugar.',
+            ], 409);
+        }
+
+        return response()->json([
+            'mensaje' => 'Producto eliminado correctamente',
+        ]);
+    }
+}
