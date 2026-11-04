@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
@@ -20,7 +19,6 @@ class ProductoController extends Controller
     {
         return new ProductoCollection(Producto::with('precios.tamano')->get());
     }
-
     /**
      * Crear un producto.
      */
@@ -33,7 +31,6 @@ class ProductoController extends Controller
             'data' => new ProductoResource($producto),
         ], 201);
     }
-
     /**
      * Mostrar un producto.
      */
