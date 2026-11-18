@@ -32,6 +32,42 @@ class DatabaseSeeder extends Seeder
         'rol' => 'empleado',
     ]);
        }
+               // Primero los roles y permisos
+        $this->call(RolesAndPermissionsSeeder::class);
+
+        // Administrador (cambia las contraseñas antes de publicar el sistema)
+        $admin = User::updateOrCreate(['email' => 'admin@pizzeria.test'], [
+            'name' => 'Administrador',
+            'password' => Hash::make('cambiar123'),
+            'rol' => 'administrador',
+        ]);
+        $admin->syncRoles('administrador');
+
+        // Cajeros
+        foreach ([1, 2, 3] as $numero) {
+            $cajero = User::updateOrCreate(['email' => "caja{$numero}@pizzeria.test"], [
+                'name' => "Cajero {$numero}",
+                'password' => Hash::make('cambiar123'),
+                'rol' => 'empleado',
+            ]);
+            $cajero->syncRoles('empleado');
+        }
+
+        // Usuarios del equipo de desarrollo
+        $equipo = [
+            ['Yaritzy Díaz Correa', 'yaritzy@pizzeria.test'],
+            ['Arturo Coria Soto', 'arturo@pizzeria.test'],
+            ['Moisés Leonardo Salinas Urbina', 'moises@pizzeria.test'],
+        ];
+
+        foreach ($equipo as [$nombre, $correo]) {
+            $desarrollador = User::updateOrCreate(['email' => $correo], [
+                'name' => $nombre,
+                'password' => Hash::make('cambiar123'),
+                'rol' => 'desarrollador',
+            ]);
+            $desarrollador->syncRoles('desarrollador');
+        }
 
         // Tamaños + precio de la orilla de queso
         $tamanos = ['Chica' => 40, 'Mediana' => 50, 'Grande' => 60, 'Familiar' => 70];

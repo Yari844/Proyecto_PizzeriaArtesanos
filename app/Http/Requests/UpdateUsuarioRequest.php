@@ -49,7 +49,7 @@ class UpdateUsuarioRequest extends FormRequest
             'email.email' => 'El correo no tiene un formato válido.',
             'email.unique' => 'Ya existe un usuario con ese correo.',
             'password.min' => 'La contraseña debe tener al menos 8 caracteres.',
-            'rol.in' => 'El rol debe ser "administrador" o "empleado".',
+            'rol.in' => 'El rol debe ser "administrador", "empleado" o "desarrollador".',
             'telefono.max' => 'El teléfono no puede tener más de 20 caracteres.',
             'activo.boolean' => 'El campo activo debe ser verdadero o falso.',
         ];
